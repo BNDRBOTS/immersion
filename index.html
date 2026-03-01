@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>GHOST ARCHITECT | KINETIC NARRATIVE</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,13 +14,15 @@
             --bg: #050505;
         }
 
-        body {
+        html, body {
             margin: 0;
+            padding: 0;
             overflow-x: hidden;
             background: var(--bg);
             color: #fff;
             font-family: 'Inter', sans-serif;
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         #canvas-container {
@@ -39,18 +41,24 @@
             width: 100%;
             min-height: 100vh;
             display: none;
+            opacity: 0;
         }
 
         .view.active {
             display: block;
+            animation: viewFadeIn 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
         }
 
         .glass-card {
             background: rgba(255, 255, 255, 0.02);
             backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 32px;
+            border-radius: 24px;
             transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        @media (min-width: 768px) {
+            .glass-card { border-radius: 32px; }
         }
 
         .glass-card:hover {
@@ -63,6 +71,7 @@
             transition: all 0.3s ease;
             position: relative;
             opacity: 0.5;
+            padding-bottom: 4px;
         }
 
         .nav-link.active {
@@ -72,7 +81,7 @@
         .nav-link::after {
             content: '';
             position: absolute;
-            bottom: -4px;
+            bottom: 0;
             left: 0;
             width: 0;
             height: 2px;
@@ -95,24 +104,13 @@
             100% { transform: translateY(0); }
         }
 
-        .bento-grid {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            grid-auto-rows: minmax(100px, auto);
-            gap: 24px;
-        }
-
         /* Seamless Page Transitions */
-        .view-transition {
-            animation: pageIn 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-        }
-
-        @keyframes pageIn {
+        @keyframes viewFadeIn {
             from { opacity: 0; filter: blur(10px); transform: scale(0.98); }
             to { opacity: 1; filter: blur(0); transform: scale(1); }
         }
 
-        ::-webkit-scrollbar { width: 0px; }
+        ::-webkit-scrollbar { width: 0px; display: none; }
     </style>
 </head>
 <body>
@@ -120,16 +118,16 @@
     <div id="canvas-container"></div>
 
     <!-- PERSISTENT OVERLAY -->
-    <header class="fixed top-0 left-0 w-full p-10 z-50 flex justify-between items-center mix-blend-difference pointer-events-none">
+    <header class="fixed top-0 left-0 w-full p-6 md:p-10 z-50 flex justify-between items-center mix-blend-difference pointer-events-none">
         <div class="pointer-events-auto">
-            <h1 class="text-3xl font-black tracking-tighter cursor-pointer leading-none" onclick="navigateTo('home')">
+            <h1 class="text-xl md:text-3xl font-black tracking-tighter cursor-pointer leading-none" onclick="navigateTo('home')" aria-label="Home">
                 GHOST<span class="text-[#ff3e3e]">.</span>ARCHITECT
             </h1>
         </div>
-        <nav class="flex gap-12 text-[11px] uppercase tracking-[0.4em] font-black pointer-events-auto">
-            <span class="nav-link active" onclick="navigateTo('home')">System</span>
-            <span class="nav-link" onclick="navigateTo('philosophy')">Philosophy</span>
-            <span class="nav-link" onclick="navigateTo('archive')">Works</span>
+        <nav class="flex gap-6 md:gap-12 text-[9px] md:text-[11px] uppercase tracking-[0.4em] font-black pointer-events-auto">
+            <button class="nav-link active" data-target="home" onclick="navigateTo('home')">System</button>
+            <button class="nav-link" data-target="philosophy" onclick="navigateTo('philosophy')">Philosophy</button>
+            <button class="nav-link" data-target="archive" onclick="navigateTo('archive')">Works</button>
         </nav>
     </header>
 
@@ -137,61 +135,61 @@
     <main id="view-home" class="view active">
         <section class="h-[500vh]">
             <div class="fixed inset-0 flex items-center justify-center pointer-events-none">
-                <div class="text-center">
+                <div class="text-center w-full px-6">
                     <div class="overflow-hidden mb-2">
-                        <p class="text-[10px] uppercase tracking-[0.8em] opacity-40 reveal-text">Architectural Intelligence</p>
+                        <p class="text-[8px] md:text-[10px] uppercase tracking-[0.8em] opacity-40 reveal-text">Architectural Intelligence</p>
                     </div>
-                    <div id="dynamic-label" class="text-[10px] uppercase tracking-[0.5em] text-[#ff3e3e] mt-48 opacity-0 transition-opacity duration-700">
+                    <div id="dynamic-label" class="text-[8px] md:text-[10px] uppercase tracking-[0.5em] text-[#ff3e3e] mt-[30vh] md:mt-48 opacity-0 transition-opacity duration-700">
                         Analyzing Structure...
                     </div>
                 </div>
             </div>
             
-            <div class="fixed bottom-12 right-12 mix-blend-difference">
-                <div class="flex flex-col items-end gap-2">
-                    <span class="text-[10px] uppercase tracking-widest opacity-30">Status</span>
-                    <span class="text-[10px] uppercase tracking-widest font-bold text-[#ff3e3e]">Operational // 2026</span>
+            <div class="fixed bottom-8 right-6 md:bottom-12 md:right-12 mix-blend-difference">
+                <div class="flex flex-col items-end gap-1 md:gap-2">
+                    <span class="text-[8px] md:text-[10px] uppercase tracking-widest opacity-30">Status</span>
+                    <span class="text-[8px] md:text-[10px] uppercase tracking-widest font-bold text-[#ff3e3e]">Operational // 2026</span>
                 </div>
             </div>
         </section>
     </main>
 
     <!-- VIEW: PHILOSOPHY -->
-    <main id="view-philosophy" class="view px-10 pt-40 pb-32 max-w-[1600px] mx-auto">
-        <div class="view-transition">
-            <div class="mb-24">
-                <h2 class="text-8xl font-black tracking-tighter leading-[0.85] mb-6">
+    <main id="view-philosophy" class="view px-6 md:px-10 pt-32 md:pt-40 pb-20 md:pb-32 max-w-[1600px] mx-auto">
+        <div>
+            <div class="mb-16 md:mb-24">
+                <h2 class="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] font-black tracking-tighter leading-[0.85] mb-6">
                     DESTRUCTIVE<br><span class="text-[#ff3e3e]">CLARITY.</span>
                 </h2>
-                <p class="text-lg opacity-40 max-w-xl font-light leading-relaxed">
+                <p class="text-base md:text-lg opacity-40 max-w-xl font-light leading-relaxed">
                     We dismantle the generic to reveal the mathematical absolute. Every pixel is a calculated variable in a larger equation of luxury.
                 </p>
             </div>
             
-            <div class="bento-grid">
+            <div class="grid grid-cols-12 gap-4 md:gap-6 auto-rows-[minmax(100px,_auto)]">
                 <!-- Cell 1 -->
-                <div class="col-span-12 lg:col-span-7 aspect-video glass-card p-12 flex flex-col justify-end relative group overflow-hidden">
-                    <div class="absolute top-12 right-12 w-24 h-24 border border-white/10 rounded-full flex items-center justify-center group-hover:border-[#ff3e3e]/50 transition-colors duration-700">
-                        <div class="w-2 h-2 bg-[#ff3e3e] rounded-full"></div>
+                <div class="col-span-12 lg:col-span-7 aspect-[4/3] md:aspect-video glass-card p-8 md:p-12 flex flex-col justify-end relative group overflow-hidden">
+                    <div class="absolute top-6 right-6 md:top-12 md:right-12 w-16 h-16 md:w-24 md:h-24 border border-white/10 rounded-full flex items-center justify-center group-hover:border-[#ff3e3e]/50 transition-colors duration-700">
+                        <div class="w-1.5 h-1.5 md:w-2 md:h-2 bg-[#ff3e3e] rounded-full"></div>
                     </div>
-                    <span class="text-[#ff3e3e] text-xs font-black mb-4 uppercase tracking-[0.4em]">Axis 01</span>
-                    <h3 class="text-4xl font-black tracking-tighter mb-4 leading-none">FORENSIC DESIGN.</h3>
-                    <p class="opacity-40 text-sm max-w-md leading-relaxed">
+                    <span class="text-[#ff3e3e] text-[10px] md:text-xs font-black mb-4 uppercase tracking-[0.4em]">Axis 01</span>
+                    <h3 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter mb-4 leading-none">FORENSIC DESIGN.</h3>
+                    <p class="opacity-40 text-xs md:text-sm max-w-md leading-relaxed">
                         Visuals are not decorated; they are engineered. We treat brand identity as a living mathematical organism that adapts to the observer.
                     </p>
                 </div>
 
                 <!-- Cell 2 -->
-                <div class="col-span-12 lg:col-span-5 glass-card p-12 flex flex-col justify-center bg-[#ff3e3e] text-black border-none">
-                    <h3 class="text-6xl font-black tracking-tighter leading-[0.9] mb-8">ZERO<br>NOISE.</h3>
-                    <div class="h-[1px] w-full bg-black/20 mb-8"></div>
-                    <p class="text-sm font-bold uppercase tracking-widest">The luxury of silence in a digital world of screaming templates.</p>
+                <div class="col-span-12 lg:col-span-5 aspect-square lg:aspect-auto glass-card p-8 md:p-12 flex flex-col justify-center bg-[#ff3e3e] text-black border-none">
+                    <h3 class="text-5xl sm:text-6xl md:text-7xl font-black tracking-tighter leading-[0.9] mb-6 md:mb-8">ZERO<br>NOISE.</h3>
+                    <div class="h-[1px] w-full bg-black/20 mb-6 md:mb-8"></div>
+                    <p class="text-xs md:text-sm font-bold uppercase tracking-widest leading-relaxed">The luxury of silence in a digital world of screaming templates.</p>
                 </div>
 
                 <!-- Cell 3 -->
-                <div class="col-span-12 lg:col-span-4 h-96 glass-card p-10 flex flex-col justify-between">
-                    <div class="text-xs opacity-30 font-mono">CODE: 0x992 / STEALTH</div>
-                    <p class="text-2xl font-bold tracking-tight">Trigonometric motion eliminates the "stutter" of standard CSS transitions.</p>
+                <div class="col-span-12 lg:col-span-4 h-64 md:h-96 glass-card p-8 md:p-10 flex flex-col justify-between">
+                    <div class="text-[10px] md:text-xs opacity-30 font-mono">CODE: 0x992 / STEALTH</div>
+                    <p class="text-lg md:text-2xl font-bold tracking-tight">Trigonometric motion eliminates the "stutter" of standard CSS transitions.</p>
                     <div class="flex gap-2">
                         <div class="w-2 h-2 bg-white/20"></div>
                         <div class="w-2 h-2 bg-[#ff3e3e]"></div>
@@ -200,14 +198,14 @@
                 </div>
 
                 <!-- Cell 4 -->
-                <div class="col-span-12 lg:col-span-8 h-96 glass-card p-10 overflow-hidden group">
+                <div class="col-span-12 lg:col-span-8 h-64 md:h-96 glass-card p-8 md:p-10 overflow-hidden group">
                     <div class="flex justify-between items-start">
-                        <h3 class="text-sm font-black uppercase tracking-[0.5em] text-[#ff3e3e]">The Circuit</h3>
-                        <span class="font-mono text-[10px] opacity-20">EST. PHOENIX 2026</span>
+                        <h3 class="text-xs md:text-sm font-black uppercase tracking-[0.5em] text-[#ff3e3e]">The Circuit</h3>
+                        <span class="font-mono text-[8px] md:text-[10px] opacity-20">EST. PHOENIX 2026</span>
                     </div>
-                    <div class="mt-20 flex items-baseline gap-4 group-hover:translate-x-4 transition-transform duration-1000">
-                        <span class="text-9xl font-black tracking-tighter opacity-10">250K+</span>
-                        <p class="text-xs uppercase tracking-widest opacity-40">Minimum Execution Tier</p>
+                    <div class="mt-12 md:mt-20 flex flex-col sm:flex-row sm:items-baseline gap-2 md:gap-4 group-hover:translate-x-4 transition-transform duration-1000">
+                        <span class="text-6xl sm:text-8xl md:text-9xl font-black tracking-tighter opacity-10">250K+</span>
+                        <p class="text-[10px] md:text-xs uppercase tracking-widest opacity-40">Minimum Execution Tier</p>
                     </div>
                 </div>
             </div>
@@ -215,51 +213,51 @@
     </main>
 
     <!-- VIEW: ARCHIVE -->
-    <main id="view-archive" class="view px-10 pt-40 pb-32 max-w-6xl mx-auto">
-        <div class="view-transition">
-            <div class="flex justify-between items-baseline mb-24">
-                <h2 class="text-8xl font-black tracking-tighter leading-none">THE<br>WORKS<span class="text-[#ff3e3e]">.</span></h2>
-                <div class="text-right">
-                    <p class="text-[10px] font-black uppercase tracking-[0.6em] opacity-30">Selected Artifacts</p>
+    <main id="view-archive" class="view px-6 md:px-10 pt-32 md:pt-40 pb-20 md:pb-32 max-w-6xl mx-auto">
+        <div>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-baseline mb-16 md:mb-24 gap-4">
+                <h2 class="text-6xl md:text-8xl font-black tracking-tighter leading-none">THE<br>WORKS<span class="text-[#ff3e3e]">.</span></h2>
+                <div class="text-left sm:text-right mt-4 sm:mt-0">
+                    <p class="text-[8px] md:text-[10px] font-black uppercase tracking-[0.6em] opacity-30">Selected Artifacts</p>
                 </div>
             </div>
 
             <div class="space-y-px">
                 <!-- Project 1 -->
-                <div class="group relative py-12 border-b border-white/5 flex justify-between items-center cursor-pointer overflow-hidden transition-all duration-700 hover:border-[#ff3e3e]/40">
-                    <div class="relative z-10 flex items-center gap-12">
-                        <span class="font-mono text-xs opacity-20 group-hover:opacity-100 group-hover:text-[#ff3e3e] transition-all">01</span>
-                        <h3 class="text-6xl font-black tracking-tighter group-hover:translate-x-4 transition-transform duration-700">VALLEY MONOLITH</h3>
+                <div class="group relative py-8 md:py-12 border-b border-white/5 flex flex-col sm:flex-row sm:justify-between sm:items-center cursor-pointer overflow-hidden transition-all duration-700 hover:border-[#ff3e3e]/40 gap-4 sm:gap-0">
+                    <div class="relative z-10 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-12">
+                        <span class="font-mono text-[10px] md:text-xs opacity-20 group-hover:opacity-100 group-hover:text-[#ff3e3e] transition-all">01</span>
+                        <h3 class="text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter group-hover:translate-x-4 transition-transform duration-700">VALLEY MONOLITH</h3>
                     </div>
-                    <div class="relative z-10 text-right opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-x-10 group-hover:translate-x-0">
-                        <p class="text-[10px] uppercase tracking-widest font-bold mb-1">Real Estate / Luxury</p>
-                        <p class="text-[10px] font-mono opacity-40">ST-882-2026</p>
+                    <div class="relative z-10 text-left sm:text-right opacity-50 sm:opacity-0 group-hover:opacity-100 transition-all duration-500 sm:-translate-x-10 group-hover:translate-x-0">
+                        <p class="text-[8px] md:text-[10px] uppercase tracking-widest font-bold mb-1">Real Estate / Luxury</p>
+                        <p class="text-[8px] md:text-[10px] font-mono opacity-40">ST-882-2026</p>
                     </div>
                     <div class="absolute inset-0 bg-gradient-to-r from-[#ff3e3e]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
                 </div>
 
                 <!-- Project 2 -->
-                <div class="group relative py-12 border-b border-white/5 flex justify-between items-center cursor-pointer overflow-hidden transition-all duration-700 hover:border-[#ff3e3e]/40">
-                    <div class="relative z-10 flex items-center gap-12">
-                        <span class="font-mono text-xs opacity-20 group-hover:opacity-100 group-hover:text-[#ff3e3e] transition-all">02</span>
-                        <h3 class="text-6xl font-black tracking-tighter group-hover:translate-x-4 transition-transform duration-700">BLACK BOX EQUITY</h3>
+                <div class="group relative py-8 md:py-12 border-b border-white/5 flex flex-col sm:flex-row sm:justify-between sm:items-center cursor-pointer overflow-hidden transition-all duration-700 hover:border-[#ff3e3e]/40 gap-4 sm:gap-0">
+                    <div class="relative z-10 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-12">
+                        <span class="font-mono text-[10px] md:text-xs opacity-20 group-hover:opacity-100 group-hover:text-[#ff3e3e] transition-all">02</span>
+                        <h3 class="text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter group-hover:translate-x-4 transition-transform duration-700">BLACK BOX EQUITY</h3>
                     </div>
-                    <div class="relative z-10 text-right opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-x-10 group-hover:translate-x-0">
-                        <p class="text-[10px] uppercase tracking-widest font-bold mb-1">Fintech / Stealth</p>
-                        <p class="text-[10px] font-mono opacity-40">BB-004-2026</p>
+                    <div class="relative z-10 text-left sm:text-right opacity-50 sm:opacity-0 group-hover:opacity-100 transition-all duration-500 sm:-translate-x-10 group-hover:translate-x-0">
+                        <p class="text-[8px] md:text-[10px] uppercase tracking-widest font-bold mb-1">Fintech / Stealth</p>
+                        <p class="text-[8px] md:text-[10px] font-mono opacity-40">BB-004-2026</p>
                     </div>
                     <div class="absolute inset-0 bg-gradient-to-r from-[#ff3e3e]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
                 </div>
 
                 <!-- Project 3 -->
-                <div class="group relative py-12 border-b border-white/5 flex justify-between items-center cursor-pointer overflow-hidden transition-all duration-700 hover:border-[#ff3e3e]/40">
-                    <div class="relative z-10 flex items-center gap-12">
-                        <span class="font-mono text-xs opacity-20 group-hover:opacity-100 group-hover:text-[#ff3e3e] transition-all">03</span>
-                        <h3 class="text-6xl font-black tracking-tighter group-hover:translate-x-4 transition-transform duration-700">NEON SEDONA</h3>
+                <div class="group relative py-8 md:py-12 border-b border-white/5 flex flex-col sm:flex-row sm:justify-between sm:items-center cursor-pointer overflow-hidden transition-all duration-700 hover:border-[#ff3e3e]/40 gap-4 sm:gap-0">
+                    <div class="relative z-10 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-12">
+                        <span class="font-mono text-[10px] md:text-xs opacity-20 group-hover:opacity-100 group-hover:text-[#ff3e3e] transition-all">03</span>
+                        <h3 class="text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter group-hover:translate-x-4 transition-transform duration-700">NEON SEDONA</h3>
                     </div>
-                    <div class="relative z-10 text-right opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-x-10 group-hover:translate-x-0">
-                        <p class="text-[10px] uppercase tracking-widest font-bold mb-1">Hospitality / Boutique</p>
-                        <p class="text-[10px] font-mono opacity-40">NS-911-2026</p>
+                    <div class="relative z-10 text-left sm:text-right opacity-50 sm:opacity-0 group-hover:opacity-100 transition-all duration-500 sm:-translate-x-10 group-hover:translate-x-0">
+                        <p class="text-[8px] md:text-[10px] uppercase tracking-widest font-bold mb-1">Hospitality / Boutique</p>
+                        <p class="text-[8px] md:text-[10px] font-mono opacity-40">NS-911-2026</p>
                     </div>
                     <div class="absolute inset-0 bg-gradient-to-r from-[#ff3e3e]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
                 </div>
@@ -269,95 +267,117 @@
 
     <script>
         /**
-         * THE GHOST ARCHITECT: CORE ENGINE v2.0
+         * THE GHOST ARCHITECT: CORE ENGINE v3.0 (PRODUCTION SPEC)
+         * - Fluid device scaling.
+         * - Deterministic navigation state mapping.
+         * - High-fidelity physics timeline (`performance.now`).
+         * - Touch/pointer input parity.
          */
 
-        let scene, camera, renderer, particles, geometry, material;
-        let particleCount = 28000;
-        let textCoords = [];
-        let scrollY = 0;
-        let mouse = new THREE.Vector2(-999, -999);
-        let currentView = 'home';
-        let targetOpacity = 0.6;
-        let isInitialized = false;
+        const ENV = {
+            isMobile: window.innerWidth < 768,
+            get particleCount() { return this.isMobile ? 12000 : 28000; },
+            get fontScale() { return this.isMobile ? '900 110px Inter' : '900 180px Inter'; },
+            get ptMultiplier() { return this.isMobile ? 0.22 : 0.35; }
+        };
+
+        const STATE = {
+            scene: null, camera: null, renderer: null, particles: null, geometry: null, material: null,
+            textCoords: [],
+            scrollY: 0,
+            mouse: new THREE.Vector2(-999, -999),
+            currentView: 'home',
+            targetOpacity: 0.6,
+            isInitialized: false
+        };
         
         const TEXTS = ["GHOST", "ARCHITECT", "VOID", "PHOENIX"];
         const COLORS = { base: 0xffffff, accent: 0xff3e3e };
 
-        window.onload = () => {
-            init();
-            animate();
-        };
+        window.onload = init;
 
         function init() {
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 100;
+            STATE.scene = new THREE.Scene();
+            STATE.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+            STATE.camera.position.z = 100;
 
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            document.getElementById('canvas-container').appendChild(renderer.domElement);
+            STATE.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+            STATE.renderer.setSize(window.innerWidth, window.innerHeight);
+            STATE.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            document.getElementById('canvas-container').appendChild(STATE.renderer.domElement);
 
-            TEXTS.forEach(text => textCoords.push(sampleText(text)));
+            // Pre-bake coordinate buffers for morphing paths
+            TEXTS.forEach(text => STATE.textCoords.push(sampleText(text)));
 
-            geometry = new THREE.BufferGeometry();
-            const positions = new Float32Array(particleCount * 3);
-            const randomness = new Float32Array(particleCount * 3);
-            const phases = new Float32Array(particleCount);
+            STATE.geometry = new THREE.BufferGeometry();
+            const pCount = ENV.particleCount;
+            const positions = new Float32Array(pCount * 3);
+            const randomness = new Float32Array(pCount * 3);
+            const phases = new Float32Array(pCount);
 
-            for (let i = 0; i < particleCount; i++) {
-                positions[i * 3] = (Math.random() - 0.5) * 600;
+            for (let i = 0; i < pCount; i++) {
+                positions[i * 3]     = (Math.random() - 0.5) * 600;
                 positions[i * 3 + 1] = (Math.random() - 0.5) * 600;
                 positions[i * 3 + 2] = (Math.random() - 0.5) * 600;
-                randomness[i * 3] = Math.random();
+                
+                randomness[i * 3]     = Math.random();
                 randomness[i * 3 + 1] = Math.random();
                 randomness[i * 3 + 2] = Math.random();
+                
                 phases[i] = Math.random() * Math.PI * 2;
             }
 
-            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            geometry.setAttribute('random', new THREE.BufferAttribute(randomness, 3));
-            geometry.setAttribute('phase', new THREE.BufferAttribute(phases, 1));
+            STATE.geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            STATE.geometry.setAttribute('random', new THREE.BufferAttribute(randomness, 3));
+            STATE.geometry.setAttribute('phase', new THREE.BufferAttribute(phases, 1));
 
-            material = new THREE.PointsMaterial({
+            STATE.material = new THREE.PointsMaterial({
                 color: COLORS.base,
-                size: 0.45,
+                size: ENV.isMobile ? 0.6 : 0.45,
                 transparent: true,
                 blending: THREE.AdditiveBlending,
                 opacity: 0.6,
                 depthWrite: false
             });
 
-            particles = new THREE.Points(geometry, material);
-            scene.add(particles);
+            STATE.particles = new THREE.Points(STATE.geometry, STATE.material);
+            STATE.scene.add(STATE.particles);
 
-            window.addEventListener('scroll', () => { if(currentView === 'home') scrollY = window.scrollY; });
-            window.addEventListener('mousemove', (e) => {
-                mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-                mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-            });
-            window.addEventListener('resize', onWindowResize);
+            bindEvents();
             
-            isInitialized = true;
+            STATE.isInitialized = true;
+            requestAnimationFrame(animate);
         }
 
         function sampleText(text) {
             const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = 1000; canvas.height = 400;
-            ctx.fillStyle = '#000'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#fff'; ctx.font = '900 180px Inter';
-            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            
+            // Adjust canvas bounding box per device to limit array bloat
+            canvas.width = ENV.isMobile ? 600 : 1000; 
+            canvas.height = ENV.isMobile ? 250 : 400;
+            
+            ctx.fillStyle = '#000'; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#fff'; 
+            ctx.font = ENV.fontScale;
+            ctx.textAlign = 'center'; 
+            ctx.textBaseline = 'middle';
+            
             ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+            
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
             const points = [];
-            for (let y = 0; y < canvas.height; y += 4) {
-                for (let x = 0; x < canvas.width; x += 4) {
+            
+            // Subsampling step. Skipping pixels optimizes the matrix.
+            const step = ENV.isMobile ? 3 : 4; 
+            
+            for (let y = 0; y < canvas.height; y += step) {
+                for (let x = 0; x < canvas.width; x += step) {
                     if (imageData[(y * canvas.width + x) * 4 + 3] > 128) {
                         points.push({ 
-                            x: (x - canvas.width / 2) * 0.35, 
-                            y: -(y - canvas.height / 2) * 0.35, 
+                            x: (x - canvas.width / 2) * ENV.ptMultiplier, 
+                            y: -(y - canvas.height / 2) * ENV.ptMultiplier, 
                             z: 0 
                         });
                     }
@@ -366,53 +386,81 @@
             return points;
         }
 
+        function bindEvents() {
+            window.addEventListener('scroll', () => { 
+                if(STATE.currentView === 'home') STATE.scrollY = window.scrollY; 
+            }, { passive: true });
+            
+            window.addEventListener('mousemove', (e) => handlePointer(e.clientX, e.clientY), { passive: true });
+            
+            window.addEventListener('touchmove', (e) => {
+                if(e.touches.length > 0) {
+                    handlePointer(e.touches[0].clientX, e.touches[0].clientY);
+                }
+            }, { passive: true });
+            
+            window.addEventListener('resize', onWindowResize, { passive: true });
+        }
+
+        function handlePointer(clientX, clientY) {
+            STATE.mouse.x = (clientX / window.innerWidth) * 2 - 1;
+            STATE.mouse.y = -(clientY / window.innerHeight) * 2 + 1;
+        }
+
         function navigateTo(viewId) {
-            currentView = viewId;
+            if (STATE.currentView === viewId) return;
+            STATE.currentView = viewId;
+            
+            // View transition matrix
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(`view-${viewId}`).classList.add('active');
             
-            // UI Link logic
+            // Deterministic routing update via attributes, strictly ignoring innerText
             document.querySelectorAll('.nav-link').forEach(l => {
-                l.classList.remove('active');
-                if(l.innerText.toLowerCase() === (viewId === 'archive' ? 'works' : viewId === 'home' ? 'system' : 'philosophy')) {
+                if(l.dataset.target === viewId) {
                     l.classList.add('active');
+                } else {
+                    l.classList.remove('active');
                 }
             });
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            scrollY = 0;
-
-            targetOpacity = (viewId === 'home') ? 0.6 : 0.15;
+            STATE.scrollY = 0;
+            STATE.targetOpacity = (viewId === 'home') ? 0.6 : 0.15;
         }
 
         function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+            // Re-eval environment constants if strictly necessary, but prefer CSS layout scaling
+            STATE.camera.aspect = window.innerWidth / window.innerHeight;
+            STATE.camera.updateProjectionMatrix();
+            STATE.renderer.setSize(window.innerWidth, window.innerHeight);
         }
 
-        function animate() {
+        function animate(timestamp) {
             requestAnimationFrame(animate);
-            if (!isInitialized || !textCoords.length) return;
+            if (!STATE.isInitialized || !STATE.textCoords.length) return;
 
-            const pos = geometry.attributes.position.array;
-            const rand = geometry.attributes.random.array;
-            const phase = geometry.attributes.phase.array;
-            const time = Date.now() * 0.001;
+            const pos = STATE.geometry.attributes.position.array;
+            const rand = STATE.geometry.attributes.random.array;
+            const phase = STATE.geometry.attributes.phase.array;
+            
+            // Using HRT (High Resolution Time) instead of Date.now() for smooth ticks
+            const time = timestamp * 0.001;
 
-            material.opacity += (targetOpacity - material.opacity) * 0.05;
+            STATE.material.opacity += (STATE.targetOpacity - STATE.material.opacity) * 0.05;
 
             let progress, index, fract, targetPointsA, targetPointsB;
 
-            if (currentView === 'home') {
-                const totalHeight = document.body.scrollHeight - window.innerHeight;
-                progress = (scrollY / Math.max(totalHeight, 1)) * (TEXTS.length - 1);
+            if (STATE.currentView === 'home') {
+                const totalHeight = Math.max(document.body.scrollHeight - window.innerHeight, 1);
+                progress = (STATE.scrollY / totalHeight) * (TEXTS.length - 1);
                 index = Math.floor(progress);
                 fract = progress - index;
-                targetPointsA = textCoords[index];
-                targetPointsB = textCoords[Math.min(index + 1, TEXTS.length - 1)];
                 
-                // Update label UI
+                targetPointsA = STATE.textCoords[index];
+                targetPointsB = STATE.textCoords[Math.min(index + 1, TEXTS.length - 1)];
+                
+                // Kinetic HUD logic
                 const label = document.getElementById('dynamic-label');
                 if (label) {
                     label.innerText = `DECONSTRUCTING: ${TEXTS[index]} → ${TEXTS[Math.min(index+1, TEXTS.length-1)]}`;
@@ -420,13 +468,16 @@
                 }
             }
 
-            for (let i = 0; i < particleCount; i++) {
+            const pCount = ENV.particleCount;
+            for (let i = 0; i < pCount; i++) {
                 const i3 = i * 3;
                 let tx, ty, tz;
 
-                if (currentView === 'home' && targetPointsA && targetPointsB) {
+                if (STATE.currentView === 'home' && targetPointsA && targetPointsB) {
+                    // Morph logic mapping point sets based on scroll delta
                     const ptA = targetPointsA[i % targetPointsA.length];
                     const ptB = targetPointsB[i % targetPointsB.length];
+                    
                     tx = ptA.x + (ptB.x - ptA.x) * fract;
                     ty = ptA.y + (ptB.y - ptA.y) * fract;
                     tz = ptA.z + (ptB.z - ptA.z) * fract;
@@ -436,15 +487,17 @@
                     ty += noise * rand[i3+1];
                     tz += Math.cos(time + phase[i]) * 5;
                 } else {
+                    // Amorphous rest-state topology
                     tx = Math.sin(time * 0.1 + phase[i]) * 180;
                     ty = Math.cos(time * 0.12 + phase[i]) * 120;
                     tz = Math.sin(time * 0.08 + phase[i]) * 150;
                 }
 
-                // Interaction Logic
-                const dx = (mouse.x * 120) - pos[i3];
-                const dy = (mouse.y * 60) - pos[i3 + 1];
+                // Pointer interaction physics (now cross-compatible with touch inputs)
+                const dx = (STATE.mouse.x * 120) - pos[i3];
+                const dy = (STATE.mouse.y * 60) - pos[i3 + 1];
                 const distSq = dx * dx + dy * dy;
+                
                 if (distSq < 1600) {
                     const dist = Math.sqrt(distSq);
                     const force = (40 - dist) / 40;
@@ -457,9 +510,9 @@
                 pos[i3 + 2] += (tz - pos[i3 + 2]) * 0.07;
             }
 
-            geometry.attributes.position.needsUpdate = true;
-            particles.rotation.y += 0.0005;
-            renderer.render(scene, camera);
+            STATE.geometry.attributes.position.needsUpdate = true;
+            STATE.particles.rotation.y += 0.0005;
+            STATE.renderer.render(STATE.scene, STATE.camera);
         }
     </script>
 </body>
